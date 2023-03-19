@@ -61,4 +61,7 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
+
+    def nav_version = "2.5.3" // can be moved to the other  build.gradle
+    implementation("androidx.navigation:navigation-compose:$nav_version")
 }
