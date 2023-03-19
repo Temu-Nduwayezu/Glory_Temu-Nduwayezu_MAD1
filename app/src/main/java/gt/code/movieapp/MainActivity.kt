@@ -60,7 +60,7 @@ fun MovieRow(movie: Movie = getMovies()[0]) {
         elevation = 5.dp
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            // A Card composable with rounded corners and elevation
+            // A Box composable with the movie poster as the background image
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
