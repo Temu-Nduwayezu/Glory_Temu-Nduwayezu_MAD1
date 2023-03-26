@@ -4,12 +4,14 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -17,24 +19,27 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 
 import gt.code.movieapp.models.Movie
-
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun MovieRow(movie: Movie, onItemClick : (String)  -> Unit   = {}) {
+fun MovieRow(movie: Movie, onMovieRowClick: (String) -> Unit, onFavoriteClick: (String) -> Unit) {
     // state variable to track whether the arrow icon is toggled
     var arrowToggled by remember { mutableStateOf(false) }
+    val isFavorite by remember { mutableStateOf( movie.isFavorite) }
 
     // A Card composable with rounded corners and elevation
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp)
-            .clickable { onItemClick(movie.id) }
+            .clickable { onMovieRowClick(movie.id) }
         ,
         shape = RoundedCornerShape(corner = CornerSize(15.dp)),
         elevation = 5.dp
@@ -45,11 +50,11 @@ fun MovieRow(movie: Movie, onItemClick : (String)  -> Unit   = {}) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(160.dp)
-                //    .clickable { onItemClick(movie.id) },
+
             ) {
                 ///Load the movie poster from the URL using Coil
                 Image(
-                    painter = rememberImagePainter(movie.images[0]),
+                    painter = rememberAsyncImagePainter(movie.images[0]),
                     contentDescription = "Movie Poster",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxWidth()
@@ -61,12 +66,17 @@ fun MovieRow(movie: Movie, onItemClick : (String)  -> Unit   = {}) {
                         .fillMaxSize()
                         .padding(16.dp),
                     contentAlignment = Alignment.TopEnd
-                ) {
-                    Icon(
-                        tint = MaterialTheme.colors.secondary,
-                        imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = "Favorite"
-                    )
+                )
+                {
+                    IconButton(onClick = { onFavoriteClick(movie.id) })
+                    {
+                        Icon(
+                            tint = MaterialTheme.colors.secondary,
+                            imageVector = if(movie.isFavorite)Icons.Filled.Favorite
+                            else Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorite"
+                        )
+                    }
                 }
             }
 
@@ -146,6 +156,18 @@ fun MovieDetails(movie: Movie) {
     }
 
 }
+// LazyColumn to display list of movies
+@Composable
+fun MovieList(movies: List<Movie>, onItemClick: (String) -> Unit, onFavoriteClick: (String) -> Unit) {
+    LazyColumn {
+        items(movies) { movie ->
+            MovieRow(movie = movie,
+                onMovieRowClick = { movieId -> onItemClick(movieId) },
+                onFavoriteClick = { movieId -> onFavoriteClick(movieId) }
+            )
+        }
+    }
+}
 
 
 
@@ -161,11 +183,10 @@ fun ImageRow(movie: Movie) {
                     .padding(8.dp)
             ) {
                 Image(
-                    painter = rememberImagePainter(
-                        data = image,
-                        builder = {
+                    painter = rememberAsyncImagePainter(
+                        ImageRequest.Builder(LocalContext.current).data(data = image).apply(block = fun ImageRequest.Builder.() {
                             crossfade(true)
-                        }
+                        }).build()
                     ),
                     contentDescription = "Scene from ${movie.title}",
                     modifier = Modifier
