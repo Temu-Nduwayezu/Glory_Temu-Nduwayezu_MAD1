@@ -37,7 +37,7 @@ fun DetailScreen(navController: NavController, movieId: String?) {
         return
     }
     Scaffold(
-        // Details (Director, Year, Genre, Actors, Rating)
+        // Details TopAppBar
         topBar = {
             SimpleAppBar(title = movie.title, onBackClick = {
                 navController.popBackStack()
