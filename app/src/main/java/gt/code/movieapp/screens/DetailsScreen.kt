@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import gt.code.movieapp.models.Movie
 import gt.code.movieapp.models.MovieViewModel
 import gt.code.movieapp.models.getMovies
 import gt.code.movieapp.reusable.SimpleAppBar
@@ -20,8 +21,8 @@ import gt.code.movieapp.screensComposable.MovieRow
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun DetailScreen(navController: NavController, movieId: String?, viewModel: MovieViewModel) {
-    val movies =getMovies()
-    val movie = movies.find{ it.id == movieId}
+    val movie: Movie? = viewModel.movieList.find { it.id == movieId}
+        //val movie = movies.find{ it.id == movieId}
     if (movie == null) {
         Text(text = "Movie not found")
         return
@@ -39,7 +40,8 @@ fun DetailScreen(navController: NavController, movieId: String?, viewModel: Movi
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            MovieRow(movie = movie, onMovieRowClick = {}, onFavoriteClick = { viewModel.toggleFavorite(it) })
+            MovieRow(movie = movie, onMovieRowClick = {}, onFavoriteClick = { movie ->
+                viewModel.toggleFavorite(movie) })
 
             // Image Row
             Text(

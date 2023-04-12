@@ -57,7 +57,7 @@ fun HomeScreen(
         MovieList(movies = viewModel.movieList, onItemClick = { movieId ->
             navController.navigate(Screen.Details.passId(movieId))
         }
-        ) { movieId -> viewModel.toggleFavorite(movieId) }
+        ) { movie-> viewModel.toggleFavorite(movie) }
     }
 }
 

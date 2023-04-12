@@ -20,16 +20,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import gt.code.movieapp.R
 
 import gt.code.movieapp.models.Movie
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun MovieRow(movie: Movie, onMovieRowClick: (String) -> Unit, onFavoriteClick: (String) -> Unit) {
+fun MovieRow(movie: Movie, onMovieRowClick: (String) -> Unit, onFavoriteClick: (Movie) -> Unit) {
     // state variable to track whether the arrow icon is toggled
     var arrowToggled by remember { mutableStateOf(false) }
     val isFavorite by remember { mutableStateOf( movie.isFavorite) }
@@ -53,12 +55,15 @@ fun MovieRow(movie: Movie, onMovieRowClick: (String) -> Unit, onFavoriteClick: (
 
             ) {
                 ///Load the movie poster from the URL using Coil
+                if (movie.images.isNotEmpty()){
                 Image(
                     painter = rememberAsyncImagePainter(movie.images[0]),
                     contentDescription = "Movie Poster",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxWidth()
-                )
+                )}else{
+                    Image(painter = painterResource(id = R.drawable.no_image), contentDescription ="Prev Image" )
+                }
 
                 // A Icon composable for marking favorite movies
                 Box(
@@ -68,7 +73,7 @@ fun MovieRow(movie: Movie, onMovieRowClick: (String) -> Unit, onFavoriteClick: (
                     contentAlignment = Alignment.TopEnd
                 )
                 {
-                    IconButton(onClick = { onFavoriteClick(movie.id) })
+                    IconButton(onClick = { onFavoriteClick(movie) })
                     {
                         Icon(
                             tint = MaterialTheme.colors.secondary,
@@ -158,12 +163,12 @@ fun MovieDetails(movie: Movie) {
 }
 // LazyColumn to display list of movies
 @Composable
-fun MovieList(movies: List<Movie>, onItemClick: (String) -> Unit, onFavoriteClick: (String) -> Unit) {
+fun MovieList(movies: List<Movie>, onItemClick: (String) -> Unit, onFavoriteClick: (Movie) -> Unit) {
     LazyColumn {
         items(movies) { movie ->
             MovieRow(movie = movie,
                 onMovieRowClick = { movieId -> onItemClick(movieId) },
-                onFavoriteClick = { movieId -> onFavoriteClick(movieId) }
+                onFavoriteClick = { movie -> onFavoriteClick(movie) }
             )
         }
     }

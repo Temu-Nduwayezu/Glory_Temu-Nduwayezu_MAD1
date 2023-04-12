@@ -1,6 +1,10 @@
 package gt.code.movieapp.models
 
-data class Movie(
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+
+class Movie(
     val id: String,
     val title: String,
     val year: String,
@@ -10,7 +14,11 @@ data class Movie(
     val plot: String,
     val images: List<String>,
     val rating: Float = 0f,
-    var isFavorite: Boolean = false)
+    initialIsFavorite: Boolean = false)
+
+{
+    var isFavorite by mutableStateOf(initialIsFavorite)
+}
 
 fun getMovies(): List<Movie> {
     return listOf(

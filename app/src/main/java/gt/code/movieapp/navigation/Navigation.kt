@@ -13,14 +13,14 @@ import gt.code.movieapp.screens.*
 //const val movieId = "movieId"
 @Composable
 fun MyNavigation() {
-    val viewModel: MovieViewModel =  viewModel()
+    val movieViewModel: MovieViewModel = viewModel()
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
         startDestination = Screen.Home.route) {
         composable(route = Screen.Home.route) {
-            HomeScreen(navController = navController, viewModel = viewModel)
+            HomeScreen(navController = navController, viewModel =movieViewModel)
         }
 
         composable(
@@ -30,14 +30,14 @@ fun MyNavigation() {
             })
         )  { backStackEntry ->
             DetailScreen(navController = navController,
-                movieId = backStackEntry.arguments?.getString(MOVIE_ID), viewModel=viewModel)
+                movieId = backStackEntry.arguments?.getString(MOVIE_ID), viewModel=movieViewModel)
         }
         composable(
             route = Screen.Favorites.route) {
-            FavoriteScreen(navController = navController, viewModel=viewModel) }
+            FavoriteScreen(navController = navController, viewModel=movieViewModel) }
         composable(
             Screen.AddMovie.route){
-            AddMovieScreen(navController = navController,viewModel= viewModel) }
+            AddMovieScreen(navController = navController,viewModel=movieViewModel) }
 
             }
 

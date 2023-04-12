@@ -136,13 +136,13 @@ class MovieViewModel : ViewModel() {
         _favoriteMovies.value = _favoriteMovies.value.filter { it.id != movieId }
     }
 
-    fun toggleFavorite(movieId: String) {
-        val movie = _movieList.find { it.id == movieId } ?: return
+    fun toggleFavorite(movieId: Movie) {
+        val movie = _movieList.find { it.id == movieId.id } ?: return
         val isFavorite = movie.isFavorite
         movie.isFavorite = !isFavorite
         if (isFavorite) {
             _favoriteMovies.value =
-                _favoriteMovies.value.filter { it.id != movieId }// remove from favorites
+                _favoriteMovies.value.filter { it.id != movieId.id }// remove from favorites
         } else {
             _favoriteMovies.value = _favoriteMovies.value + movie // add to favorites
         }
