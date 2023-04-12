@@ -79,7 +79,7 @@ class MovieViewModel : ViewModel() {
     }
 
     fun validateRating(rating: String) {
-        _ratingValid.value = !rating.isNullOrBlank()
+        _ratingValid.value = rating.isNotBlank() && rating.toDoubleOrNull() != null && rating.toDouble().let { it in 0.0..10.0 }
         validate()
     }
     fun validatePlot(plot: String) {
@@ -125,9 +125,21 @@ class MovieViewModel : ViewModel() {
     private fun updateEnableSaveButton() {
         _addEnabledSaveButton.value = _isValid.value
     }
+    fun resetFields() {
+        _titleValid.value = false
+        _yearValid.value = false
+        _genresValid.value = false
+        _directorValid.value = false
+        _actorsValid.value = false
+        _ratingValid.value = false
+        _plot.value = ""
+        _errorText.value = ""
+        _addEnabledSaveButton.value = false
+    }
 
     fun addMovie(movie: Movie){
         _movieList.add(movie)
+        resetFields()
     }
 
 
