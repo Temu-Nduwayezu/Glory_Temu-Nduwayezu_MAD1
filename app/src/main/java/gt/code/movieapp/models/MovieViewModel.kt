@@ -1,7 +1,8 @@
+
 package gt.code.movieapp.models
+
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
-
 
 class MovieViewModel : ViewModel() {
 
@@ -45,9 +46,29 @@ class MovieViewModel : ViewModel() {
     val plot: State<String>
         get() = _plot
 
-    private val _errorText = mutableStateOf("")
-    val errorText: State<String>
-        get() = _errorText
+    private val _errorTitle = mutableStateOf("")
+    val errorTitle: State<String>
+        get() = _errorTitle
+
+    private val _errorYear = mutableStateOf("")
+    val errorYear: State<String>
+        get() = _errorYear
+
+    private val _errorGenres = mutableStateOf("")
+    val errorGenres: State<String>
+        get() = _errorGenres
+
+    private val _errorDirector = mutableStateOf("")
+    val errorDirector: State<String>
+        get() = _errorDirector
+
+    private val _errorActors = mutableStateOf("")
+    val errorActors: State<String>
+        get() = _errorActors
+
+    private val _errorRating = mutableStateOf("")
+    val errorRating: State<String>
+        get() = _errorRating
 
     private val _addEnabledSaveButton = mutableStateOf(false)
     val enabledSaveButton: State<Boolean>
@@ -55,33 +76,40 @@ class MovieViewModel : ViewModel() {
 
     fun validateTitle(title: String) {
         _titleValid.value = title.isNotBlank()
+        updateErrorTitle()
         validate()
     }
 
     fun validateYear(year: String) {
         _yearValid.value = year.isNotBlank() && year.toIntOrNull() != null
+        updateErrorYear()
         validate()
     }
 
     fun validateGenres(genres: List<ListItemSelectable>) {
-        _genresValid.value = genres.size >=1
+        _genresValid.value = genres.any { it.isSelected }
+        updateErrorGenres()
         validate()
     }
 
     fun validateDirector(director: String) {
         _directorValid.value = director.isNotBlank()
+        updateErrorDirector()
         validate()
     }
 
     fun validateActors(actors: String) {
         _actorsValid.value = actors.isNotBlank()
+        updateErrorActors()
         validate()
     }
 
     fun validateRating(rating: String) {
         _ratingValid.value = rating.isNotBlank() && rating.toDoubleOrNull() != null && rating.toDouble().let { it in 0.0..10.0 }
+        updateErrorRating()
         validate()
     }
+
     fun validatePlot(plot: String) {
         _plot.value = plot
     }
@@ -94,37 +122,37 @@ class MovieViewModel : ViewModel() {
                 _actorsValid.value &&
                 _ratingValid.value
 
-        when {
-            !_titleValid.value -> {
-                _errorText.value = "Title is required"
-            }
-            !_yearValid.value -> {
-                _errorText.value = "Year is required"
-            }
-            !_genresValid.value -> {
-                _errorText.value = "At least one genre must be selected"
-            }
-            !_directorValid.value -> {
-                _errorText.value = "Director is required"
-            }
-            !_actorsValid.value -> {
-                _errorText.value = "Actors are required"
-            }
-            !_ratingValid.value -> {
-                _errorText.value = "Rating is required"
-            }
-            else -> {
-                _errorText.value = ""
-            }
-        }
-
         updateEnableSaveButton()
     }
-
 
     private fun updateEnableSaveButton() {
         _addEnabledSaveButton.value = _isValid.value
     }
+
+    private fun updateErrorTitle() {
+        _errorTitle.value = if (_titleValid.value) "" else "Title is required"
+    }
+
+    private fun updateErrorYear() {
+        _errorYear.value = if (_yearValid.value) "" else "Year is required and must be integer"
+    }
+
+    private fun updateErrorGenres() {
+        _errorGenres.value = if (_genresValid.value) "" else "At least one genre must be selected"
+    }
+
+    private fun updateErrorDirector() {
+        _errorDirector.value = if (_directorValid.value) "" else "Director is required"
+    }
+
+    private fun updateErrorActors() {
+        _errorActors.value = if (_actorsValid.value) "" else "Actors are required"
+    }
+
+    private fun updateErrorRating() {
+        _errorRating.value = if (_ratingValid.value) "" else "Rating is required and must be between 0.0-10.0."
+    }
+
     fun resetFields() {
         _titleValid.value = false
         _yearValid.value = false
@@ -133,15 +161,19 @@ class MovieViewModel : ViewModel() {
         _actorsValid.value = false
         _ratingValid.value = false
         _plot.value = ""
-        _errorText.value = ""
+        _errorTitle.value = ""
+        _errorYear.value = ""
+        _errorGenres.value = ""
+        _errorDirector.value = ""
+        _errorActors.value = ""
+        _errorRating.value = ""
         _addEnabledSaveButton.value = false
     }
 
-    fun addMovie(movie: Movie){
+    fun addMovie(movie: Movie) {
         _movieList.add(movie)
         resetFields()
     }
-
 
     fun removeMovie(movieId: String) {
         _movieList.removeAll { it.id == movieId }
@@ -154,19 +186,10 @@ class MovieViewModel : ViewModel() {
         movie.isFavorite = !isFavorite
         if (isFavorite) {
             _favoriteMovies.value =
-                _favoriteMovies.value.filter { it.id != movieId.id }// remove from favorites
+                _favoriteMovies.value.filter { it.id != movieId.id } // remove from favorites
         } else {
             _favoriteMovies.value = _favoriteMovies.value + movie // add to favorites
         }
     }
 }
-
-
-
-
-
-
-
-
-
 

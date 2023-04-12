@@ -52,6 +52,8 @@ fun MainContent(modifier: Modifier = Modifier, navController: NavController, vie
             .padding(10.dp)
     ) {
 
+
+
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
@@ -110,9 +112,7 @@ fun MainContent(modifier: Modifier = Modifier, navController: NavController, vie
                 label = { Text(text = stringResource(R.string.enter_movie_title)) },
                 isError = !viewModel.titleValid.value
             )
-            if (!viewModel.titleValid.value) {
-                Text(text = viewModel.errorText.value, color = MaterialTheme.colors.error)
-            }
+            ErrorText(errorText = viewModel.errorTitle.value)
 
             OutlinedTextField(
                 value = year,
@@ -123,9 +123,7 @@ fun MainContent(modifier: Modifier = Modifier, navController: NavController, vie
                 label = { Text(stringResource(R.string.enter_movie_year)) },
                 isError = !viewModel.yearValid.value
             )
-            if (!viewModel.yearValid.value) {
-                Text(text = viewModel.errorText.value, color = MaterialTheme.colors.error)
-            }
+            ErrorText(errorText = viewModel.errorYear.value)
 
             Text(
                 modifier = Modifier.padding(top = 4.dp),
@@ -156,6 +154,7 @@ fun MainContent(modifier: Modifier = Modifier, navController: NavController, vie
                                     it
                                 }
 
+
                             }
                             viewModel.validateGenres(genreItems)
 
@@ -168,10 +167,7 @@ fun MainContent(modifier: Modifier = Modifier, navController: NavController, vie
                 }
 
             }
-            if(!viewModel.genresValid.value)
-            {
-                Text(text = viewModel.errorText.value, color = MaterialTheme.colors.error)
-            }
+            ErrorText(errorText = viewModel.errorGenres.value)
 
 
 
@@ -184,9 +180,7 @@ fun MainContent(modifier: Modifier = Modifier, navController: NavController, vie
                 label = { Text(stringResource(R.string.enter_director)) },
                 isError = !viewModel.directorValid.value
             )
-            if (!viewModel.directorValid.value) {
-                Text(text = viewModel.errorText.value, color = MaterialTheme.colors.error)
-            }
+            ErrorText(errorText = viewModel.errorDirector.value)
 
 
 
@@ -199,9 +193,7 @@ fun MainContent(modifier: Modifier = Modifier, navController: NavController, vie
                 label = { Text(stringResource(R.string.enter_actors)) },
                isError = !viewModel.actorsValid.value
             )
-            if (!viewModel.actorsValid.value) {
-                Text(text = viewModel.errorText.value, color = MaterialTheme.colors.error)
-            }
+            ErrorText(errorText = viewModel.errorActors.value)
 
             OutlinedTextField(
                 value = plot,
@@ -236,9 +228,8 @@ fun MainContent(modifier: Modifier = Modifier, navController: NavController, vie
                 label = { Text(stringResource(R.string.enter_rating)) },
                 isError = !viewModel.ratingValid.value
             )
-            if (!viewModel.ratingValid.value) {
-                Text(text = viewModel.errorText.value, color = MaterialTheme.colors.error)
-            }
+            ErrorText(errorText = viewModel.errorRating.value)
+
             isEnabledSaveButton = viewModel.enabledSaveButton.value
 
 
@@ -270,6 +261,17 @@ fun MainContent(modifier: Modifier = Modifier, navController: NavController, vie
 
 
         }
+    }
+}
+@Composable
+fun ErrorText(errorText: String) {
+    if (errorText.isNotBlank()) {
+        Text(
+            text = errorText,
+            color = MaterialTheme.colors.error,
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier.padding(top = 8.dp)
+        )
     }
 }
 
