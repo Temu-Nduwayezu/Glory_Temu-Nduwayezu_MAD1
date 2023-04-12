@@ -155,9 +155,12 @@ fun MainContent(modifier: Modifier = Modifier, navController: NavController, vie
                                 } else {
                                     it
                                 }
+
                             }
                             viewModel.validateGenres(genreItems)
+
                         }
+
 
                     ) {
                         Text(text = genreItem.title)
@@ -165,10 +168,12 @@ fun MainContent(modifier: Modifier = Modifier, navController: NavController, vie
                 }
 
             }
-          //  if(!viewModel.genresValid.value)
-         //   {
-          //      Text(text = viewModel.errorText.value, color = MaterialTheme.colors.error)
-          //  }
+            if(!viewModel.genresValid.value)
+            {
+                Text(text = viewModel.errorText.value, color = MaterialTheme.colors.error)
+            }
+
+
 
             OutlinedTextField(
                 value = director,
@@ -179,6 +184,9 @@ fun MainContent(modifier: Modifier = Modifier, navController: NavController, vie
                 label = { Text(stringResource(R.string.enter_director)) },
                 isError = !viewModel.directorValid.value
             )
+            if (!viewModel.directorValid.value) {
+                Text(text = viewModel.errorText.value, color = MaterialTheme.colors.error)
+            }
 
 
 
@@ -189,7 +197,7 @@ fun MainContent(modifier: Modifier = Modifier, navController: NavController, vie
                 onValueChange = { actors = it
                     viewModel.validateActors(it)},
                 label = { Text(stringResource(R.string.enter_actors)) },
-              //  isError = !viewModel.actorsValid.value
+               isError = !viewModel.actorsValid.value
             )
             if (!viewModel.actorsValid.value) {
                 Text(text = viewModel.errorText.value, color = MaterialTheme.colors.error)
@@ -228,28 +236,34 @@ fun MainContent(modifier: Modifier = Modifier, navController: NavController, vie
                 label = { Text(stringResource(R.string.enter_rating)) },
                 isError = !viewModel.ratingValid.value
             )
+            if (!viewModel.ratingValid.value) {
+                Text(text = viewModel.errorText.value, color = MaterialTheme.colors.error)
+            }
             isEnabledSaveButton = viewModel.enabledSaveButton.value
 
 
             Button(
+                enabled = isEnabledSaveButton,
                 onClick = {
                     if (viewModel.isValid.value) {
-                        val newMovie = Movie(
+                        val selectedGenres  = genreItems.filter { it.isSelected }.map { Genre.valueOf(it.title)}
+                            val newMovie = Movie(
                             id = UUID.randomUUID().toString(),
                             title = title,
                             year = year,
-                            genre = genres,
+                            genre = selectedGenres ,
                             director = director,
                             actors = actors,
                             plot = plot ?: "",
                             rating = rating.toFloat(),
-                            images = listOf()
+                            images = listOf(),
+                            initialIsFavorite = false
                         )
                         viewModel.addMovie(newMovie)
                        navController.popBackStack()// Navigate back to the previous screen
                     }
                 },
-                enabled = isEnabledSaveButton,
+
             ) {
                 Text(text = stringResource(R.string.add))
             }
