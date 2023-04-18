@@ -4,62 +4,55 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.ui.Modifier
-import gt.code.movieapp.models.MovieViewModel
-import gt.code.movieapp.navigation.MyNavigation
+import gt.code.movieapp.navigation.Navigation
 import gt.code.movieapp.ui.theme.MovieAppTheme
 
 class MainActivity : ComponentActivity() {
+    // variable instantiations should go into onCreate
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       // val viewModel: MovieViewModel by viewModels()
-        setContent {
-            MovieAppTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Column(modifier = Modifier.fillMaxSize()) {
 
-                        // Display the movie list
-                        MyNavigation()
-                    }
-                }
+        setContent {
+            MovieAppTheme  {
+                Navigation()
             }
         }
     }
 
+    // Activity becomes visible to the users
     override fun onStart() {
         super.onStart()
-        Log.i("MainActivity", "I am onStart")
+        Log.i("MainActivity", "onStart called.")
     }
 
+    // Activity is interactive and running in foreground
     override fun onResume() {
         super.onResume()
-        Log.i("MainActivity", "I am onResume")
+        Log.i("MainActivity", "onResume called.")
     }
 
+    // Activity loses foreground state (eg. another app is interrupting the process) but we can still see it
     override fun onPause() {
         super.onPause()
-        Log.i("MainActivity", "I am onPause")
+        Log.i("MainActivity", "onPause called.")
     }
 
+    // Activity is no longer visible to the user
     override fun onStop() {
         super.onStop()
-        Log.i("MainActivity", "I am onStop")
+        Log.i("MainActivity", "onStop called.")
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i("MainActivity", "I am onDestroy")
-    }
-
+    // App is transitioning from onStop back to foreground
     override fun onRestart() {
         super.onRestart()
-        Log.i("MainActivity", "I am onRestart")
+        Log.i("MainActivity", "onRestart called.")
+    }
+
+    // Activity is destroyed -> process is killed or shut down by the user
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("MainActivity", "onDestroy called.")
     }
 }
 

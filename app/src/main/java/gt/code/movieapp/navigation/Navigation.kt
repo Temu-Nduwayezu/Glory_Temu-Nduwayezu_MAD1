@@ -9,36 +9,37 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import gt.code.movieapp.models.MovieViewModel
 import gt.code.movieapp.screens.*
+import gt.code.movieapp.viewmodels.MoviesViewModel
 
 //const val movieId = "movieId"
 @Composable
-fun MyNavigation() {
-    val movieViewModel: MovieViewModel = viewModel()
+fun Navigation() {
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = Screen.Home.route) {
-        composable(route = Screen.Home.route) {
-            HomeScreen(navController = navController, viewModel =movieViewModel)
+    // inside a composable
+    val movieViewModel: MoviesViewModel = viewModel()
+
+    NavHost(navController = navController, startDestination = Screen.MainScreen.route) {
+        composable(route = Screen.MainScreen.route){
+            HomeScreen(navController = navController, moviesViewModel = movieViewModel)
         }
 
+        composable(Screen.FavoriteScreen.route) {
+            FavoriteScreen(navController = navController, moviesViewModel = movieViewModel)
+        }
+
+        composable(Screen.AddMovieScreen.route) {
+            AddMovieScreen(navController = navController, moviesViewModel = movieViewModel)
+        }
+
+        // build a route like: root/detail-screen/id=34
         composable(
-            route = Screen.Details.route,
-            arguments = listOf(navArgument(MOVIE_ID){
-                type = NavType.StringType
-            })
-        )  { backStackEntry ->
+            Screen.DetailScreen.route,
+            arguments = listOf(navArgument(name = DETAIL_ARGUMENT_KEY) {type = NavType.StringType})
+        ) { backStackEntry ->    // backstack contains all information from navhost
             DetailScreen(navController = navController,
-                movieId = backStackEntry.arguments?.getString(MOVIE_ID), viewModel=movieViewModel)
+                moviesViewModel = movieViewModel,
+                movieId = backStackEntry.arguments?.getString(DETAIL_ARGUMENT_KEY))   // get the argument from navhost that will be passed
         }
-        composable(
-            route = Screen.Favorites.route) {
-            FavoriteScreen(navController = navController, viewModel=movieViewModel) }
-        composable(
-            Screen.AddMovie.route){
-            AddMovieScreen(navController = navController,viewModel=movieViewModel) }
-
-            }
-
     }
+}

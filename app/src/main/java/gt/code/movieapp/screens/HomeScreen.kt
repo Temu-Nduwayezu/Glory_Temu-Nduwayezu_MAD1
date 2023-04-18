@@ -1,68 +1,101 @@
 package gt.code.movieapp.screens
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.runtime.*
-import androidx.navigation.NavHostController
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import gt.code.movieapp.models.MovieViewModel
-import gt.code.movieapp.screensComposable.MovieList
+import gt.code.movieapp.widgets.HomeTopAppBar
+import gt.code.movieapp.widgets.MovieRow
+import gt.code.movieapp.viewmodels.MoviesViewModel
 
-
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
-    navController: NavHostController = rememberNavController(),
-    viewModel: MovieViewModel
-) {
-    // state variable to track whether the menu is expanded
-    var expanded by remember { mutableStateOf(false) }
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "Movies")
-                },
-                actions = {
-                    IconButton(onClick = { expanded = true }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "Menu")
-                    }
-                    // DropdownMenu for "Favorites"
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                    ) {
-                        DropdownMenuItem(onClick = {
-                            navController.navigate(Screen.Favorites.route)
-                            expanded = false
-                        }) {
-                            Text(text = "Favorites")
-                        }
-                        Divider() // Add a divider
-                        DropdownMenuItem(onClick = {
-                            navController.navigate(Screen.AddMovie.route) // Navigate to AddMovieScreen
-                            expanded = false
-                        }) {
-                            Text(text = "Add Movie")
-                        }
+    navController: NavController = rememberNavController(),
+    moviesViewModel: MoviesViewModel
+){
+    Scaffold(topBar = {
+        HomeTopAppBar(
+            title = "Home",
+            menuContent = {
+                DropdownMenuItem(onClick = { navController.navigate(Screen.AddMovieScreen.route) }) {
+                    Row {
+                        Icon(imageVector = Icons.Default.Edit, contentDescription = "Add Movie", modifier = Modifier.padding(4.dp))
+                        Text(text = "Add Movie", modifier = Modifier
+                            .width(100.dp)
+                            .padding(4.dp))
                     }
                 }
-            )
-        }
-    ) {
-        // LazyColumn to display list of movies
-        MovieList(movies = viewModel.movieList, onItemClick = { movieId ->
-            navController.navigate(Screen.Details.passId(movieId))
-        }
-        ) { movie-> viewModel.toggleFavorite(movie) }
+                DropdownMenuItem(onClick = { navController.navigate(Screen.FavoriteScreen.route) }) {
+                    Row {
+                        Icon(imageVector = Icons.Default.Favorite, contentDescription = "Favorites", modifier = Modifier.padding(4.dp))
+                        Text(text = "Favorites", modifier = Modifier
+                            .width(100.dp)
+                            .padding(4.dp))
+                    }
+                }
+            }
+        )
+    }) { padding ->
+        MainContent(
+            modifier = Modifier.padding(padding),
+            navController = navController,
+            viewModel = moviesViewModel
+        )
     }
 }
 
+@Composable
+fun MainContent(
+    modifier: Modifier,
+    navController: NavController,
+    viewModel: MoviesViewModel
+) {
+    MovieList(
+        modifier = modifier,
+        navController = navController,
+        viewModel = viewModel
+    )
+}
 
+@Composable
+fun MovieList(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    viewModel: MoviesViewModel
+) {
+    val movieListState by viewModel.movieListState.collectAsState()
 
+    LazyColumn (
+        modifier = modifier,
+        contentPadding = PaddingValues(all = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
 
+        items(items = movieListState) { movieItem ->
+            MovieRow(
+                movie = movieItem,
+                onMovieRowClick = { movieId ->
+                    navController.navigate(Screen.DetailScreen.withId(movieId))
+                },
+                onFavClick  = { movie ->
+                    viewModel.updateFavoriteMovies(movie)
+                }
+            )
+        }
+    }
+}
 
 

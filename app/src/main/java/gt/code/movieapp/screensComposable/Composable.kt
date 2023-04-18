@@ -28,7 +28,6 @@ import coil.request.ImageRequest
 import gt.code.movieapp.R
 
 import gt.code.movieapp.models.Movie
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun MovieRow(movie: Movie, onMovieRowClick: (String) -> Unit, onFavoriteClick: (Movie) -> Unit) {
@@ -62,7 +61,7 @@ fun MovieRow(movie: Movie, onMovieRowClick: (String) -> Unit, onFavoriteClick: (
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxWidth()
                 )}else{
-                    Image(painter = painterResource(id = R.drawable.no_image), contentDescription ="Prev Image" )
+                    Image(painter = painterResource(id = R.drawable.no_image_placeholder), contentDescription ="Prev Image" )
                 }
 
                 // A Icon composable for marking favorite movies

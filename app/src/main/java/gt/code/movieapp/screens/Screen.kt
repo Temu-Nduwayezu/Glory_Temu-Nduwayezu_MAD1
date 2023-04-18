@@ -1,16 +1,14 @@
 package gt.code.movieapp.screens
 
-const val MOVIE_ID = "movieId"
-sealed class Screen(val route: String){
-    object Home: Screen(route = "home_screen")
-    object Details:Screen(route = "details_screen/{$MOVIE_ID}") {
-        fun passId(id: String): String {
-            return this.route.replace(oldValue = "{$MOVIE_ID}", newValue = id)
+const val DETAIL_ARGUMENT_KEY = "movieId"
+sealed class Screen (val route: String) {
+    object MainScreen : Screen("main")
+    object DetailScreen : Screen("detail/{$DETAIL_ARGUMENT_KEY}") {
+        fun withId(id: String): String {
+            return this.route.replace(oldValue = "{$DETAIL_ARGUMENT_KEY}", newValue = id)
         }
     }
-    object Favorites: Screen(route = "favorites_screen")
+    object FavoriteScreen : Screen("favorite")
 
-    object AddMovie: Screen(route = "addMovie_screen")
-
-
+    object AddMovieScreen : Screen("addMovie")
 }

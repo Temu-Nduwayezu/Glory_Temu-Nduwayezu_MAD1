@@ -4,7 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
-data class ListItemSelectable(
+class ListItemSelectable(
     val title: String,
-    val isSelected: Boolean
-)
+    initialIsSelected: Boolean = false
+) {
+    var isSelected by mutableStateOf(initialIsSelected)
+}
