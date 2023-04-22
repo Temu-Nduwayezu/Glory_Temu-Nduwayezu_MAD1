@@ -10,23 +10,28 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import gt.code.movieapp.R
-import gt.code.movieapp.viewmodels.MoviesViewModel
+import gt.code.movieapp.utils.InjectorUtils
+import gt.code.movieapp.viewmodels.AddMovieViewModel
 import gt.code.movieapp.widgets.SimpleTextField
 import gt.code.movieapp.widgets.SimpleTopAppBar
+import kotlinx.coroutines.launch
 
 @Composable
-fun AddMovieScreen(
-    navController: NavController,
-    moviesViewModel: MoviesViewModel
-){
+fun AddMovieScreen(navController: NavController){
+
+    val addMovieViewModel: AddMovieViewModel = viewModel(factory = InjectorUtils.provideAddMovieViewModelFactory(
+        LocalContext.current))
+
     val scaffoldState = rememberScaffoldState()
 
     Scaffold(
@@ -39,7 +44,7 @@ fun AddMovieScreen(
     ) { padding ->
         MainContent(
             Modifier.padding(padding),
-            moviesViewModel = moviesViewModel,
+            addMovieViewModel = addMovieViewModel,
             navController = navController
         )
     }
@@ -48,7 +53,7 @@ fun AddMovieScreen(
 @Composable
 fun MainContent(
     modifier: Modifier = Modifier,
-    moviesViewModel: MoviesViewModel,
+    addMovieViewModel:AddMovieViewModel,
     navController: NavController
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -61,10 +66,12 @@ fun MainContent(
     ) {
 
         MovieBody(
-            movieUiState = moviesViewModel.movieUiState,
-            onMovieValueChange = { newUiState, event -> moviesViewModel.updateUIState(newUiState, event)},
+            movieUiState = addMovieViewModel.movieUiState,
+            onMovieValueChange = { newUiState, event -> addMovieViewModel.updateUIState(newUiState, event)},
             onSaveClick = {
-                moviesViewModel.saveMovie()
+                coroutineScope.launch {
+                    addMovieViewModel.saveMovie()
+                }
                 navController.navigate(Screen.MainScreen.route)
             }
         )

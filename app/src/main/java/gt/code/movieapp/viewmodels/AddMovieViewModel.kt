@@ -5,31 +5,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import gt.code.movieapp.common.Validator
-import gt.code.movieapp.models.Movie
-import gt.code.movieapp.models.getMovies
+import gt.code.movieapp.repositories.MovieRepository
 import gt.code.movieapp.screens.AddMovieUIEvent
 import gt.code.movieapp.screens.AddMovieUiState
 import gt.code.movieapp.screens.hasError
 import gt.code.movieapp.screens.toMovie
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
-// inherit from ViewModel class
-class MoviesViewModel: ViewModel() {
-    private val _movieListState = MutableStateFlow(listOf<Movie>())
-    val movieListState: StateFlow<List<Movie>> = _movieListState.asStateFlow()
+
+class AddMovieViewModel(private val movieRepository: MovieRepository): ViewModel() {
 
     var movieUiState by mutableStateOf(AddMovieUiState())
         private set
 
-    val favoriteMovies: List<Movie>
-        get() = _movieListState.value.filter { it.isFavorite }
-
-    init {
-        _movieListState.value = getMovies()
-    }
 
     fun updateUIState(newMovieUiState: AddMovieUiState, event: AddMovieUIEvent){
         var state = AddMovieUiState()   // this is needed because copy always creates a new instance
@@ -69,18 +56,9 @@ class MoviesViewModel: ViewModel() {
         movieUiState = state.copy(actionEnabled = !newMovieUiState.hasError())
     }
 
-    fun updateFavoriteMovies(movie: Movie) = _movieListState.value.find { it.id == movie.id }?.let { movie ->
-        movie.isFavorite = !movie.isFavorite
-    }
 
-
-    fun saveMovie() {
-        val movie = movieUiState.toMovie()
-
-        _movieListState.update {
-            val list: MutableList<Movie> = _movieListState.value.toMutableList()
-            list.add(movie)
-            list
-        }
+    suspend fun saveMovie() {
+        movieRepository.add(movieUiState.toMovie())
     }
 }
+

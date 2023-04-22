@@ -3,40 +3,53 @@ package gt.code.movieapp.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import gt.code.movieapp.models.Movie
-import gt.code.movieapp.viewmodels.MoviesViewModel
+import gt.code.movieapp.utils.InjectorUtils
+import gt.code.movieapp.viewmodels.MovieDetailsViewModel
 import gt.code.movieapp.widgets.HorizontalScrollableImageView
 import gt.code.movieapp.widgets.MovieRow
 import gt.code.movieapp.widgets.SimpleTopAppBar
+import kotlinx.coroutines.launch
 
 @Composable
 fun DetailScreen(
     navController: NavController,
-    moviesViewModel: MoviesViewModel,
     movieId:String?){
+    val movieDetailsViewModel : MovieDetailsViewModel = viewModel(factory = InjectorUtils.provideMovieDetailsViewModelFactory(
+        LocalContext.current))
+    val coroutineScope = rememberCoroutineScope()
 
-    movieId?.let {
-        val movie = moviesViewModel.movieListState.value.filter { it.id == movieId  }[0]
+   movieId?.let {
+        val movie =  movieDetailsViewModel.getMovie(it)
         val scaffoldState = rememberScaffoldState() // this contains the `SnackbarHostState`
 
         Scaffold(scaffoldState = scaffoldState, // attaching `scaffoldState` to the `Scaffold`
             topBar = {
                 SimpleTopAppBar(arrowBackClicked = { navController.popBackStack() }) {
-                    Text(text = movie.title)
+                    if (movie != null) {
+                        Text(text = movie.title)
+                    }
                 }
             },
         ) { padding ->
-            MainContent(
-                Modifier.padding(padding),
-                movie,
-                onFavClick = { movie ->
-                    moviesViewModel.updateFavoriteMovies(movie)
-                }
-            )
+            movie?.let { it1 ->
+                MainContent(
+                    Modifier.padding(padding),
+                    it1,
+                    onFavClick = { movie ->
+                        coroutineScope.launch {
+                            movieDetailsViewModel.updateFavoriteMovies(movie)
+                        }
+                    }
+                )
+            }
         }
     }
 }

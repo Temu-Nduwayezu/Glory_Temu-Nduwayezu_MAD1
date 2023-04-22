@@ -1,12 +1,15 @@
 package gt.code.movieapp.models
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.*
 
-class Movie(
-    val id: String = UUID.randomUUID().toString(),
+
+@Entity(tableName = "movie")
+data class Movie(
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
     val title: String = "",
     val year: String = "",
     val genre: List<Genre> = listOf(),
@@ -15,10 +18,17 @@ class Movie(
     val plot: String = "No plot available",
     val images: List<String> = listOf(),
     val rating: Double = 0.0,
-    initialIsFavorite: Boolean = false
-) {
-    var isFavorite by mutableStateOf(initialIsFavorite)
+    var isFavorite: Boolean = false
+    //initialIsFavorite: Boolean = false
+)
+{
+    // correct the check error
+    override fun equals(other: Any?): Boolean {
+        return super.equals(other)
+    }
+// var isFavorite by mutableStateOf(initialIsFavorite)
 }
+
 fun getMovies(): List<Movie> {
     return listOf(
         Movie(id = "tt0499549",
