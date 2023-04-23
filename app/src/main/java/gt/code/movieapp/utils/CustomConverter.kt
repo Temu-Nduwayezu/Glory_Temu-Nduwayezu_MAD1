@@ -27,13 +27,13 @@ class CustomConverter {
 
     @TypeConverter
     fun toStringImage(value: List<String>?): String? {
-        val images = value?.joinToString(separator = ",")
+        val images = value?.joinToString(separator = "#")
        // println("Images after conversion: $images")
         return images
     }
     @TypeConverter
     fun fromStringImage(value: String?): List<String>? {
-        val images = value?.split(",")?.map { it.trim() }
+        val images = value?.split("#")?.map { it.trim() }
        // println("Images before conversion: $images")
         if (images?.last() == "") {
             images.dropLast(1)

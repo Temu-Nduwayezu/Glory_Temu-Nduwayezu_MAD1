@@ -13,7 +13,7 @@ import gt.code.movieapp.utils.CustomConverter
 // data base require 3 attributes
 @Database(
     entities = [Movie::class], // table you want to be created
-    version = 2,  // for changes
+    version = 3,  // for changes
     exportSchema = false // can also set to true
 )
 
