@@ -13,26 +13,34 @@ class CustomConverter {
 
     @TypeConverter
     fun fromStringGenre(value: String): List<Genre> {
-        val genresList = mutableListOf<Genre>()
+        val genres = mutableListOf<Genre>()
 
         value.split(",").map { it.trim() }.forEach {
-            genresList.add(enumValueOf(it))
+
+            genres.add(enumValueOf(it))
         }
 
-        return genresList
+        return genres
     }
 
     // for Type Conversion of Images
-    @TypeConverter
-
-    fun fromStringImage(value: String): List<String> {
-        return value.split(",").map { it.trim() }
-    }
 
     @TypeConverter
-    fun toStringImage(value: List<String>): String {
-        return value.joinToString(separator = ",")
+    fun toStringImage(value: List<String>?): String? {
+        val images = value?.joinToString(separator = ",")
+       // println("Images after conversion: $images")
+        return images
     }
+    @TypeConverter
+    fun fromStringImage(value: String?): List<String>? {
+        val images = value?.split(",")?.map { it.trim() }
+       // println("Images before conversion: $images")
+        if (images?.last() == "") {
+            images.dropLast(1)
+        }
+        return images
+    }
+
 }
 
 

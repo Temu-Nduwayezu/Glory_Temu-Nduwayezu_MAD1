@@ -12,16 +12,13 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 
-class HomeMoviesViewModel(private val movieRepository: MovieRepository,private val context: Context) : ViewModel() {
+class HomeMoviesViewModel(private val movieRepository: MovieRepository) : ViewModel() {
     private val _movieListState = MutableStateFlow(listOf<Movie>())
     val movieListState: StateFlow<List<Movie>> = _movieListState.asStateFlow()
 
     init {
         viewModelScope.launch {
            getMovies().forEach{ movie ->  movieRepository.add(movie)} // load movie into db (MarleneZoe Ruf idea)
-            val movieDao = MovieDatabase.getDatabase(context).movieDao()
-          //  movieDao.deleteAll()
-
             movieRepository.getAllMovies().collect() { movieList ->
                 if (movieList.isNotEmpty()) {
                     _movieListState.value = movieList

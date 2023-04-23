@@ -19,7 +19,7 @@ object InjectorUtils {
 
     fun provideHomeMoviesViewModelFactory(context: Context): HomeMoviesViewModelFactory{
         val repository = getMovieRepository(context)
-        return  HomeMoviesViewModelFactory(repository,context)
+        return  HomeMoviesViewModelFactory(repository)
     }
 
 
