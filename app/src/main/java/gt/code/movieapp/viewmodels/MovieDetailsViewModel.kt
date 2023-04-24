@@ -5,21 +5,19 @@ import androidx.lifecycle.viewModelScope
 import gt.code.movieapp.models.Movie
 import gt.code.movieapp.repositories.MovieRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
 
-class MovieDetailsViewModel(private val movieRepository:MovieRepository) : ViewModel() {
-    private val _movieListState = MutableStateFlow(listOf<Movie>())
-    val movieListState: StateFlow<List<Movie>> = _movieListState.asStateFlow()
+class MovieDetailsViewModel(private val movieRepository:MovieRepository, private val id: String) : ViewModel() {
+   val movieListState =MutableStateFlow(Movie())
 
     init {
         viewModelScope.launch {
-            movieRepository.getAllMovies().collect { movieList ->
-                if (movieList.isNotEmpty()) {
-                    _movieListState.value = movieList
+            movieRepository.getMovie(id)
+                .collect { movieList ->
+                movieList?.let { // ? safe  call non null
+                    movieListState.value = movieList
                 }
             }
         }
@@ -30,11 +28,14 @@ class MovieDetailsViewModel(private val movieRepository:MovieRepository) : ViewM
         movieRepository.update(movie)
     }
 
-    fun getMovie(movieId: String): Movie? {
+
+ /*   fun getMovie(movieId: String): Movie? {
         return movieListState.value.firstOrNull {
             it.id == movieId
         }
     }
+
+  */
 }
 
 

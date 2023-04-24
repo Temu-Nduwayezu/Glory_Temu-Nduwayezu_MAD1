@@ -1,7 +1,6 @@
 package gt.code.movieapp.models
 
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.*
@@ -26,7 +25,6 @@ data class Movie(
     override fun equals(other: Any?): Boolean {
         return super.equals(other)
     }
-// var isFavorite by mutableStateOf(initialIsFavorite)
 }
 
 fun getMovies(): List<Movie> {

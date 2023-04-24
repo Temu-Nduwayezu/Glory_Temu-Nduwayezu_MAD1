@@ -29,9 +29,9 @@ object InjectorUtils {
     }
 
 
-    fun provideMovieDetailsViewModelFactory(context: Context): MovieDetailsViewModelFactory{
+    fun provideMovieDetailsViewModelFactory(context: Context, movieId: String): MovieDetailsViewModelFactory{
         val repository = getMovieRepository(context)
-        return  MovieDetailsViewModelFactory(repository)
+        return  MovieDetailsViewModelFactory(repository,movieId)
     }
 
 
